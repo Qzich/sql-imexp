@@ -12,23 +12,30 @@ class Action {
      */
     public static function main($params) {
         $me = new self;
-        if (isset($params['run']))
-            $me->run($params);
+        if (isset($params['run']) && $params['run'] != false)
+            $me->$params['run']($params);
         echo "pass 'run' param to start importing...";
     }
 
-    public function run($params) {
+    public function import($params) {
         $parser = bootstrap::inst()->getObject("parser");
-        
-        isset($params['file']) ? $file = $params['file'] : $file = "dump.sql";
-        isset($params['delim']) ? $delim = $params['delim'] : $delim = ";";
-        if (!file_exists($file))
-            throw new Exception("file not exists");
         ob_start();
-        $parser->executeSqlFile($file, $delim);
+        $parser->executeSqlFile(
+                $this->getParam($params, 'file', 'dump.sql'), $this->getParam($params, 'delim', ';'));
         ob_end_clean();
         echo "ok";
     }
-    
+
+    public function export($params) {
+        $dump = bootstrap::inst()->getObject("mysqldump");
+        $name = 'dump/dump_' . time(microtime());
+        $dump->start($this->getParam($params, 'file', $name . ".sql"));
+        echo "ok\n";
+        echo "dumpname: $name";
+    }
+
+    protected function getParam($params, $name, $defvalue) {
+        return isset($params[$name]) ? $params[$name] : $defvalue;
+    }
 
 }
