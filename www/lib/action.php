@@ -12,9 +12,14 @@ class Action {
      */
     public static function main($params) {
         $me = new self;
-        if (isset($params['run']) && $params['run'] != false)
-            $me->$params['run']($params);
-        echo "pass 'run' param to start importing...";
+        $msg = "";
+        $msg = "pass 'run' param to start importing...";
+        if (isset($params['run'])) {
+            if ($params['run'] != false)
+                $me->$params['run']($params);
+            $msg = "available actions: ?run=import[&file=dump.sql&delim=;]  ?run=export[&file=todump.sql]";
+        }
+        echo $msg;
     }
 
     public function import($params) {
