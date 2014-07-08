@@ -13,11 +13,11 @@ class Action {
     public static function main($params) {
         $me = new self;
         $msg = "";
-        $msg = "pass 'run' param to start importing...";
+        $msg = "pass 'run' param to start importing..."."<br>";
         if (isset($params['run'])) {
             if ($params['run'] != false)
                 $me->$params['run']($params);
-            $msg = "available actions: ?run=import[&file=dump.sql&delim=;]  ?run=export[&file=todump.sql]";
+            $msg = "available actions:<br> ?run=import[&file=dump.sql&delim=;] <br>  ?run=export[&file=todump.sql]";
         }
         echo $msg;
     }
@@ -35,8 +35,8 @@ class Action {
         $dump = bootstrap::inst()->getObject("mysqldump");
         $name = 'dump/dump_' . time(microtime());
         $dump->start($this->getParam($params, 'file', $name . ".sql"));
-        echo "ok\n";
-        echo "dumpname: $name";
+        echo "ok<br>";
+        echo "dumpname: $name"."<br>";
     }
 
     protected function getParam($params, $name, $defvalue) {
