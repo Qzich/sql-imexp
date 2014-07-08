@@ -8,6 +8,7 @@ class bootstrap {
     static $objects;
 
     public static function inst() {
+        set_time_limit(0);
         return new self;
     }
 
