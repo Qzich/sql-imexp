@@ -22,7 +22,7 @@ class bootstrap {
 
     public function configureDbConnection() {
         $iniparams = $this->getDbParams();
-        $dsn = strtr('mysql:host=?host;dbname=?dbname', array("?host" => $iniparams['host'], "?dbname" => $iniparams['dbname']));
+        $dsn = strtr('mysql:host=?host;dbname=?dbname;charset=utf8', array("?host" => $iniparams['host'], "?dbname" => $iniparams['dbname']));
         $db = self::$objects["dbConnection"] = new PDO($dsn, $iniparams["user"], $iniparams["password"]);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
