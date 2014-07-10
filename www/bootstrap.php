@@ -8,6 +8,7 @@ class bootstrap {
     static $objects;
 
     public static function inst() {
+        ini_set('display_errors', '1');
         set_time_limit(0);
         return new self;
     }
@@ -23,7 +24,7 @@ class bootstrap {
         $iniparams = $this->getDbParams();
         $dsn = strtr('mysql:host=?host;dbname=?dbname', array("?host" => $iniparams['host'], "?dbname" => $iniparams['dbname']));
         $db = self::$objects["dbConnection"] = new PDO($dsn, $iniparams["user"], $iniparams["password"]);
-        $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     public function configureParser() {
