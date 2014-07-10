@@ -25,6 +25,7 @@ class SqlParser {
         if ($info->isDir()) {
             return $this->executeFromPath(new DirectoryIterator($path));
         }
+        throw new Exception("Invalid path");
     }
 
     /**
@@ -35,8 +36,13 @@ class SqlParser {
     public function executeFromPath($res) {
         $out = '';
         foreach ($res as $path) {
-            if ($path->isFile())
-                $out.=$this->executeSqlFile($path) . "\n";
+            if ($path->isFile()) {
+                try {
+                    $out.=$this->executeSqlFile($path) . "\n";
+                } catch (SqlFileException $exc) {
+                    $out.="\n-- Error while trying execute file: ".$exc->getMessage()."\n";
+                }
+            }
         }
         return $out;
     }
@@ -47,11 +53,9 @@ class SqlParser {
      * @return mixed
      */
     public function executeSqlFile($res) {
-        $cont = "";
-        if ($res->getExtension() == "sql") {
-            $cont = $this->parseSqlFile($res->getRealPath());
-            $this->executeSql($cont);
-        }
+        $cont = "\n-- Executing sql expression --" . "\n";
+        $cont .= $this->parseSqlFile($res);
+        $this->executeSql($cont);
         return $cont;
     }
 
@@ -63,11 +67,15 @@ class SqlParser {
      * @return array
      */
     public function parseSqlFile($file) {
-        if (!file_exists($file) || !preg_match('/.*\.sql$/', $file))
+        if (!file_exists($file->getRealPath()))
             throw new SqlFileException(
-            "\nFile doesn't exists or it is not a sql file " . "\n" . $file
+            "\nFile doesn't exists : ". $file
             );
-        return file_get_contents($file);
+        if ($file->getExtension() != "sql")
+            throw new SqlFileException(
+            "\nIt is not a sql file : " . $file
+            );
+        return file_get_contents($file->getRealPath());
     }
 
     public function executeSql($sql) {

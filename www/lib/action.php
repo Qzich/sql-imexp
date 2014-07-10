@@ -26,7 +26,7 @@ class Action {
         $parser = bootstrap::inst()->getObject("parser");
         $log = $parser->execute(
                 $this->getParam($params, 'path', 'dump.sql'), $this->getParam($params, 'delim', ';'));
-        file_put_contents('import.log', "\n\n-- Executing sql expression --" . "\n" . $log);
+        file_put_contents('import.log', $log);
         echo "ok<br>";
     }
 
