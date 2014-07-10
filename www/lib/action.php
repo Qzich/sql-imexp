@@ -17,15 +17,15 @@ class Action {
         if (isset($params['run'])) {
             if ($params['run'] != false)
                 $me->$params['run']($params);
-            $msg = "available actions:<br> ?run=import[&file=dump.sql&delim=;] <br>  ?run=export[&file=todump.sql]";
+            $msg = "available actions:<br> ?run=import[&path=dump.sql|dir&delim=;] <br>  ?run=export[&file=todump.sql]";
         }
         echo $msg;
     }
 
     public function import($params) {
         $parser = bootstrap::inst()->getObject("parser");
-        $log = $parser->executeSqlFile(
-                $this->getParam($params, 'file', 'dump.sql'), $this->getParam($params, 'delim', ';'));
+        $log = $parser->execute(
+                $this->getParam($params, 'path', 'dump.sql'), $this->getParam($params, 'delim', ';'));
         file_put_contents('import.log', "\n\n-- Executing sql expression --" . "\n" . $log);
         echo "ok<br>";
     }
