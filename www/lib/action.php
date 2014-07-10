@@ -13,7 +13,7 @@ class Action {
     public static function main($params) {
         $me = new self;
         $msg = "";
-        $msg = "pass 'run' param to start importing..."."<br>";
+        $msg = "pass 'run' param to start importing..." . "<br>";
         if (isset($params['run'])) {
             if ($params['run'] != false)
                 $me->$params['run']($params);
@@ -24,11 +24,10 @@ class Action {
 
     public function import($params) {
         $parser = bootstrap::inst()->getObject("parser");
-        ob_start();
-        $parser->executeSqlFile(
+        $log = $parser->executeSqlFile(
                 $this->getParam($params, 'file', 'dump.sql'), $this->getParam($params, 'delim', ';'));
-        ob_end_clean();
-        echo "ok";
+        file_put_contents('import.log', "\n\n-- Executing sql expression --" . "\n" . $log);
+        echo "ok<br>";
     }
 
     public function export($params) {
@@ -36,7 +35,7 @@ class Action {
         $name = 'dump/dump_' . time(microtime());
         $dump->start($this->getParam($params, 'file', $name . ".sql"));
         echo "ok<br>";
-        echo "dumpname: $name"."<br>";
+        echo "dumpname: $name" . "<br>";
     }
 
     protected function getParam($params, $name, $defvalue) {
